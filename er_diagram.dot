@@ -1,0 +1,105 @@
+digraph ER {
+  graph [rankdir=LR, fontname="Helvetica", labelloc=t, fontsize=20, pad=0.4, nodesep=0.5, ranksep=1.0,
+         label="Hospital Management Database: ER diagram (9 tables, 3NF)"];
+  node  [shape=plaintext, fontname="Helvetica", fontsize=11];
+  edge  [fontname="Helvetica", fontsize=10, color="#555555", arrowhead=crow, arrowtail=tee, dir=both];
+
+  departments [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F4F8FF">
+      <TR><TD BGCOLOR="#2F5D9B"><FONT COLOR="white"><B>departments</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> department_id</TD></TR>
+      <TR><TD ALIGN="LEFT">name (UQ)</TD></TR>
+      <TR><TD ALIGN="LEFT">floor_no</TD></TR>
+      <TR><TD ALIGN="LEFT">phone</TD></TR>
+    </TABLE>>];
+
+  doctors [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F4F8FF">
+      <TR><TD BGCOLOR="#2F5D9B"><FONT COLOR="white"><B>doctors</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> doctor_id</TD></TR>
+      <TR><TD ALIGN="LEFT"><I>FK</I> department_id</TD></TR>
+      <TR><TD ALIGN="LEFT">first_name, last_name</TD></TR>
+      <TR><TD ALIGN="LEFT">specialization</TD></TR>
+      <TR><TD ALIGN="LEFT">email (UQ), phone</TD></TR>
+      <TR><TD ALIGN="LEFT">consultation_fee (CHECK &gt;= 0)</TD></TR>
+      <TR><TD ALIGN="LEFT">db_username (UQ)</TD></TR>
+      <TR><TD ALIGN="LEFT">joined_on, is_active</TD></TR>
+    </TABLE>>];
+
+  patients [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F4F8FF">
+      <TR><TD BGCOLOR="#2F5D9B"><FONT COLOR="white"><B>patients</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> patient_id</TD></TR>
+      <TR><TD ALIGN="LEFT">first_name, last_name</TD></TR>
+      <TR><TD ALIGN="LEFT">date_of_birth, gender</TD></TR>
+      <TR><TD ALIGN="LEFT">blood_group</TD></TR>
+      <TR><TD ALIGN="LEFT">phone, email (UQ), city</TD></TR>
+      <TR><TD ALIGN="LEFT">registered_on</TD></TR>
+    </TABLE>>];
+
+  appointments [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#FFF8EC">
+      <TR><TD BGCOLOR="#B8741A"><FONT COLOR="white"><B>appointments</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> appointment_id</TD></TR>
+      <TR><TD ALIGN="LEFT"><I>FK</I> patient_id</TD></TR>
+      <TR><TD ALIGN="LEFT"><I>FK</I> doctor_id</TD></TR>
+      <TR><TD ALIGN="LEFT">appointment_at (UQ with doctor_id)</TD></TR>
+      <TR><TD ALIGN="LEFT">status, reason</TD></TR>
+      <TR><TD ALIGN="LEFT">diagnosis, notes (clinical)</TD></TR>
+    </TABLE>>];
+
+  prescriptions [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F1FAF1">
+      <TR><TD BGCOLOR="#3B7D3B"><FONT COLOR="white"><B>prescriptions</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> prescription_id</TD></TR>
+      <TR><TD ALIGN="LEFT"><I>FK</I> appointment_id (UQ)</TD></TR>
+      <TR><TD ALIGN="LEFT">issued_on</TD></TR>
+    </TABLE>>];
+
+  prescription_items [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F1FAF1">
+      <TR><TD BGCOLOR="#3B7D3B"><FONT COLOR="white"><B>prescription_items</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK, FK</B> prescription_id</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK, FK</B> medicine_id</TD></TR>
+      <TR><TD ALIGN="LEFT">quantity, dosage</TD></TR>
+      <TR><TD ALIGN="LEFT">unit_price (price snapshot)</TD></TR>
+    </TABLE>>];
+
+  medicines [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F1FAF1">
+      <TR><TD BGCOLOR="#3B7D3B"><FONT COLOR="white"><B>medicines</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> medicine_id</TD></TR>
+      <TR><TD ALIGN="LEFT">name (UQ)</TD></TR>
+      <TR><TD ALIGN="LEFT">unit_price (CHECK &gt; 0)</TD></TR>
+      <TR><TD ALIGN="LEFT">stock_qty</TD></TR>
+    </TABLE>>];
+
+  invoices [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F8F1FA">
+      <TR><TD BGCOLOR="#7A3B8C"><FONT COLOR="white"><B>invoices</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> invoice_id</TD></TR>
+      <TR><TD ALIGN="LEFT"><I>FK</I> appointment_id (UQ)</TD></TR>
+      <TR><TD ALIGN="LEFT">consultation_fee, medicine_total</TD></TR>
+      <TR><TD ALIGN="LEFT">total_amount (generated)</TD></TR>
+      <TR><TD ALIGN="LEFT">status, issued_on</TD></TR>
+    </TABLE>>];
+
+  payments [label=<
+    <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" BGCOLOR="#F8F1FA">
+      <TR><TD BGCOLOR="#7A3B8C"><FONT COLOR="white"><B>payments</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B> payment_id</TD></TR>
+      <TR><TD ALIGN="LEFT"><I>FK</I> invoice_id</TD></TR>
+      <TR><TD ALIGN="LEFT">amount (CHECK &gt; 0), method</TD></TR>
+      <TR><TD ALIGN="LEFT">paid_at</TD></TR>
+    </TABLE>>];
+
+  // relationships: parent (one)  ->  child (many)
+  departments -> doctors            [label="has"];
+  doctors     -> appointments       [label="sees"];
+  patients    -> appointments       [label="books"];
+  appointments -> prescriptions     [label="may have 1", arrowhead=tee];
+  prescriptions -> prescription_items [label="contains"];
+  medicines   -> prescription_items [label="prescribed in"];
+  appointments -> invoices          [label="billed by 1", arrowhead=tee];
+  invoices    -> payments           [label="paid by"];
+}
